@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.home.screen.folder
 
 import android.graphics.Rect
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -68,6 +69,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.rememberConstraintsSizeResolver
 import coil3.request.ImageRequest.Builder
 import coil3.request.addLastModifiedToFileCacheKey
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
@@ -389,6 +392,15 @@ private fun SharedTransitionScope.FolderGridItemContent(
 
     val isVisibleWhiteBox = isSelected && drag == Drag.Dragging
 
+    val sizeResolver = rememberConstraintsSizeResolver()
+
+    val painter = rememberAsyncImagePainter(
+        model = Builder(LocalContext.current).data(gridItem.customIcon ?: icon)
+            .addLastModifiedToFileCacheKey(true)
+            .size(sizeResolver)
+            .build(),
+    )
+
     LaunchedEffect(key1 = drag) {
         handleDrag(
             drag = drag,
@@ -479,11 +491,12 @@ private fun SharedTransitionScope.FolderGridItemContent(
     ) {
         if (!hasInteraction) {
             Box(modifier = Modifier.size(currentGridItemSettings.iconSize.dp)) {
-                AsyncImage(
-                    model = Builder(LocalContext.current).data(gridItem.customIcon ?: icon)
-                        .addLastModifiedToFileCacheKey(true).build(),
+                Image(
+                    painter = painter,
                     contentDescription = null,
                     modifier = Modifier
+                        .then(sizeResolver)
+                        .matchParentSize()
                         .sharedElementWithCallerManagedVisibility(
                             rememberSharedContentState(
                                 key = SharedElementKey(
@@ -504,8 +517,7 @@ private fun SharedTransitionScope.FolderGridItemContent(
                             intOffset = layoutCoordinates.positionInRoot().round()
 
                             intSize = layoutCoordinates.size
-                        }
-                        .matchParentSize(),
+                        },
                 )
 
                 if (settings.isNotificationAccessGranted() && hasNotifications) {
