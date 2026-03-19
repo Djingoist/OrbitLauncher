@@ -23,7 +23,6 @@ import android.os.UserHandle
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -107,8 +106,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.compose.rememberConstraintsSizeResolver
 import coil3.request.ImageRequest
 import coil3.request.addLastModifiedToFileCacheKey
 import com.eblan.launcher.designsystem.icon.EblanLauncherIcons
@@ -342,6 +339,10 @@ private fun SharedTransitionScope.Success(
 
             selectedTagIds.clear()
         }
+
+        if (swipeY.roundToInt() > 0 && showPopupApplicationMenu) {
+            showPopupApplicationMenu = false
+        }
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -363,6 +364,12 @@ private fun SharedTransitionScope.Success(
     LaunchedEffect(key1 = drag) {
         if (drag == Drag.Start && searchBarState.currentValue == SearchBarValue.Expanded) {
             searchBarState.animateToCollapsed()
+        }
+    }
+
+    LaunchedEffect(key1 = horizontalPagerState.isScrollInProgress) {
+        if (horizontalPagerState.isScrollInProgress && showPopupApplicationMenu) {
+            showPopupApplicationMenu = false
         }
     }
 
@@ -449,6 +456,7 @@ private fun SharedTransitionScope.Success(
                     isRearrangeEblanApplicationInfo = isRearrangeEblanApplicationInfo,
                     managedProfileResult = managedProfileResult,
                     paddingValues = paddingValues,
+                    showPopupApplicationMenu = showPopupApplicationMenu,
                     onDismiss = onDismiss,
                     onDismissDragAndDrop = {
                         isRearrangeEblanApplicationInfo = false
@@ -489,6 +497,7 @@ private fun SharedTransitionScope.Success(
                 isRearrangeEblanApplicationInfo = isRearrangeEblanApplicationInfo,
                 managedProfileResult = managedProfileResult,
                 paddingValues = paddingValues,
+                showPopupApplicationMenu = showPopupApplicationMenu,
                 onDismiss = onDismiss,
                 onDismissDragAndDrop = {
                     isRearrangeEblanApplicationInfo = false
@@ -604,6 +613,7 @@ private fun SharedTransitionScope.EblanApplicationInfosPage(
     isRearrangeEblanApplicationInfo: Boolean,
     managedProfileResult: ManagedProfileResult?,
     paddingValues: PaddingValues,
+    showPopupApplicationMenu: Boolean,
     onDismiss: () -> Unit,
     onDismissDragAndDrop: () -> Unit,
     onDragEnd: (Float) -> Unit,
@@ -685,6 +695,7 @@ private fun SharedTransitionScope.EblanApplicationInfosPage(
                 iconPackFilePaths = iconPackFilePaths,
                 managedProfileResult = managedProfileResult,
                 paddingValues = paddingValues,
+                showPopupApplicationMenu = showPopupApplicationMenu,
                 onDismiss = onDismiss,
                 onDragEnd = onDragEnd,
                 onDraggingGridItem = onDraggingGridItem,
@@ -792,6 +803,7 @@ private fun SharedTransitionScope.EblanApplicationInfos(
     iconPackFilePaths: Map<String, String>,
     managedProfileResult: ManagedProfileResult?,
     paddingValues: PaddingValues,
+    showPopupApplicationMenu: Boolean,
     onDismiss: () -> Unit,
     onDragEnd: (Float) -> Unit,
     onDraggingGridItem: () -> Unit,
@@ -837,6 +849,12 @@ private fun SharedTransitionScope.EblanApplicationInfos(
     }
 
     var isQuietModeEnabled by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = lazyGridState.isScrollInProgress) {
+        if (lazyGridState.isScrollInProgress && showPopupApplicationMenu) {
+            onUpdatePopupMenu(false)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -1080,14 +1098,10 @@ private fun SharedTransitionScope.EblanApplicationInfoItem(
                 onDraggingGridItem()
             }
 
-            Drag.Cancel if isLongPress -> {
-                onUpdatePopupMenu(false)
-
-                isLongPress = false
-            }
-
-            Drag.End if isLongPress -> {
-                isLongPress = false
+            Drag.Cancel, Drag.End -> {
+                if (isLongPress) {
+                    isLongPress = false
+                }
             }
 
             else -> Unit

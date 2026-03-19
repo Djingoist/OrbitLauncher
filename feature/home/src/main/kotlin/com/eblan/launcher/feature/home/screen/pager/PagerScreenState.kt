@@ -900,6 +900,20 @@ internal class PagerScreenState(
         overlayIntOffset = overlayIntOffset?.plus(dragAmount.round())
     }
 
+    fun handleIsScrollInProgress(
+        isGridScrollInProgress: Boolean,
+        isDockScrollInProgress: Boolean,
+        isFolderScrollInProgress: Boolean,
+    ) {
+        if (isGridScrollInProgress || isDockScrollInProgress) {
+            dismissGridItemPopup()
+        }
+
+        if (isFolderScrollInProgress) {
+            dismissFolderGridItemPopup()
+        }
+    }
+
     fun showFolder(
         height: Int,
         id: String?,

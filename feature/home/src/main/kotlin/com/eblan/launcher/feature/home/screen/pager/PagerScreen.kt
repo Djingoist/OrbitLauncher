@@ -596,6 +596,18 @@ internal fun PagerScreen(
         pagerScreenState.handleIsPressHome()
     }
 
+    LaunchedEffect(
+        key1 = gridHorizontalPagerState.isScrollInProgress,
+        key2 = dockGridHorizontalPagerState.isScrollInProgress,
+        key3 = folderGridHorizontalPagerState.isScrollInProgress,
+    ) {
+        pagerScreenState.handleIsScrollInProgress(
+            isGridScrollInProgress = gridHorizontalPagerState.isScrollInProgress,
+            isDockScrollInProgress = dockGridHorizontalPagerState.isScrollInProgress,
+            isFolderScrollInProgress = folderGridHorizontalPagerState.isScrollInProgress,
+        )
+    }
+
     SharedTransitionLayout(
         modifier = modifier
             .pointerInput(Unit) {
