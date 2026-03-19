@@ -44,6 +44,7 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.WorkOff
@@ -70,7 +71,6 @@ object EblanLauncherIcons {
     val DeveloperMode = Icons.Default.DeveloperMode
     val Close = Icons.Default.Close
     val Save = Icons.Default.Save
-    val Handshake = Icons.Default.Handshake
     val Shortcut = Icons.AutoMirrored.Filled.Shortcut
     val Restore = Icons.Default.Restore
     val Search = Icons.Default.Search
@@ -78,4 +78,5 @@ object EblanLauncherIcons {
     val LockOpen = Icons.Default.LockOpen
     val Done = Icons.Default.Done
     val MoreVert = Icons.Default.MoreVert
+    val Warning = Icons.Default.Warning
 }
