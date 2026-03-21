@@ -866,8 +866,7 @@ private fun SharedTransitionScope.InteractiveShortcutInfoGridItem(
                 model = data.eblanApplicationInfoIcon,
                 modifier = Modifier
                     .size((gridItemSettings.iconSize * 0.25).dp)
-                    .align(Alignment.BottomEnd)
-                    .alpha(alpha),
+                    .align(Alignment.BottomEnd),
                 contentDescription = null,
             )
         }

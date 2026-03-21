@@ -52,7 +52,7 @@ interface AndroidLauncherAppsWrapper {
         sourceBounds: Rect,
     )
 
-    fun getShortcutIconDrawable(
+    fun getShortcutBadgedIconDrawable(
         shortcutInfo: ShortcutInfo?,
         density: Int,
     ): Drawable?

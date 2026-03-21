@@ -429,7 +429,7 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
     val shortcutInfo = pinItemRequest?.shortcutInfo
 
     if (pinItemRequest != null && shortcutInfo != null && pinItemRequest.isValid && pinItemRequest.accept()) {
-        val icon = androidLauncherAppsWrapper.getShortcutIconDrawable(
+        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
             shortcutInfo = shortcutInfo,
             density = 0,
         )?.let { drawable ->

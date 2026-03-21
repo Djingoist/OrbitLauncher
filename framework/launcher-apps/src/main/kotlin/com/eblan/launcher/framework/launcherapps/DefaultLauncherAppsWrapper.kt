@@ -405,11 +405,11 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
-    override fun getShortcutIconDrawable(
+    override fun getShortcutBadgedIconDrawable(
         shortcutInfo: ShortcutInfo?,
         density: Int,
     ): Drawable? = if (shortcutInfo != null) {
-        launcherApps.getShortcutIconDrawable(shortcutInfo, density)
+        launcherApps.getShortcutBadgedIconDrawable(shortcutInfo, density)
     } else {
         null
     }

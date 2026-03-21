@@ -47,9 +47,9 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
     @param:Dispatcher(EblanDispatchers.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
-        shortcutId: String,
-        packageName: String,
         serialNumber: Long,
+        id: String,
+        packageName: String,
         shortLabel: String,
         longLabel: String,
         isEnabled: Boolean,
@@ -70,18 +70,20 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         val eblanApplicationInfoIcon =
             packageManagerWrapper.getComponentName(packageName = packageName)
                 ?.let { componentName ->
+                    val iconKey = "$serialNumber:$componentName"
+
                     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                     val file = File(
                         directory,
-                        fileManager.getHashedFileName(name = componentName),
+                        fileManager.getHashedFileName(name = iconKey),
                     )
 
                     file.absolutePath
                 }
 
         val data = GridItemData.ShortcutInfo(
-            shortcutId = shortcutId,
+            shortcutId = id,
             packageName = packageName,
             serialNumber = serialNumber,
             shortLabel = shortLabel,
@@ -94,7 +96,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         )
 
         val gridItem = GridItem(
-            id = shortcutId,
+            id = id,
             page = initialPage,
             startColumn = 0,
             startRow = 0,
@@ -130,7 +132,7 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         )
 
         if (newGridItem != null) {
-            gridCacheRepository.upsertGridItems(gridItems = gridItems + newGridItem)
+            gridCacheRepository.insertGridItems(gridItems = gridItems + newGridItem)
         }
 
         newGridItem

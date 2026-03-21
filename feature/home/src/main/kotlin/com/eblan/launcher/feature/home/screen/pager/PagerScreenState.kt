@@ -1316,7 +1316,11 @@ internal class PagerScreenState(
                     val shortcutInfo = pinItemRequest.shortcutInfo
 
                     if (shortcutInfo != null) {
-                        val icon = androidLauncherAppsWrapper.getShortcutIconDrawable(
+                        val serialNumber = androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+
+                        val shortcutIconKey = "$serialNumber:${shortcutInfo.`package`}:${shortcutInfo.id}"
+
+                        val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
                             shortcutInfo = shortcutInfo,
                             density = 0,
                         )?.let { drawable ->
@@ -1324,7 +1328,7 @@ internal class PagerScreenState(
 
                             val file = File(
                                 directory,
-                                fileManager.getHashedFileName(name = shortcutInfo.id),
+                                fileManager.getHashedFileName(name = shortcutIconKey),
                             )
 
                             androidImageSerializer.createDrawablePath(

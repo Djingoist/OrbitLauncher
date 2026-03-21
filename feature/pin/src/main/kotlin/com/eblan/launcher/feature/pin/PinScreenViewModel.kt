@@ -66,9 +66,9 @@ class PinScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _gridItem.update {
                 addPinShortcutToHomeScreenUseCase(
-                    shortcutId = id,
-                    packageName = packageName,
                     serialNumber = serialNumber,
+                    id = id,
+                    packageName = packageName,
                     shortLabel = shortLabel,
                     longLabel = longLabel,
                     isEnabled = isEnabled,

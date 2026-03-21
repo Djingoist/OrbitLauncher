@@ -151,13 +151,13 @@ private fun PinShortcutScreen(
 ) {
     val pinItemRequestWrapper = LocalPinItemRequest.current
 
-    val launcherApps = LocalLauncherApps.current
+    val androidLauncherAppsWrapper = LocalLauncherApps.current
 
     val imageSerializer = LocalImageSerializer.current
 
     val shortcutInfo = pinItemRequest.shortcutInfo
 
-    val userManager = LocalUserManager.current
+    val androidUserManagerWrapper = LocalUserManager.current
 
     val fileManager = LocalFileManager.current
 
@@ -167,7 +167,7 @@ private fun PinShortcutScreen(
 
     if (shortcutInfo != null) {
         val icon = remember {
-            launcherApps.getShortcutIconDrawable(
+            androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
                 shortcutInfo = shortcutInfo,
                 density = 0,
             )
@@ -210,7 +210,13 @@ private fun PinShortcutScreen(
                     label = shortcutInfo.shortLabel.toString(),
                     onAdd = {
                         scope.launch {
-                            val icon = launcherApps.getShortcutIconDrawable(
+                            val serialNumber =
+                                androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+
+                            val shortcutIconKey =
+                                "$serialNumber:${shortcutInfo.`package`}:${shortcutInfo.id}"
+
+                            val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
                                 shortcutInfo = shortcutInfo,
                                 density = 0,
                             )?.let { drawable ->
@@ -219,19 +225,16 @@ private fun PinShortcutScreen(
 
                                 val file = File(
                                     directory,
-                                    fileManager.getHashedFileName(name = shortcutInfo.id),
+                                    fileManager.getHashedFileName(name = shortcutIconKey),
                                 )
 
-                                imageSerializer.createDrawablePath(
-                                    drawable = drawable,
-                                    file = file,
-                                )
+                                imageSerializer.createDrawablePath(drawable = drawable, file = file)
 
                                 file.absolutePath
                             }
 
                             onAddPinShortcutToHomeScreen(
-                                userManager.getSerialNumberForUser(userHandle = shortcutInfo.userHandle),
+                                serialNumber,
                                 shortcutInfo.id,
                                 shortcutInfo.`package`,
                                 shortcutInfo.shortLabel.toString(),
@@ -410,8 +413,8 @@ private fun PinWidgetScreen(
                             appWidgetProviderInfo.minResizeHeight,
                             appWidgetProviderInfo.maxResizeWidth,
                             appWidgetProviderInfo.maxResizeHeight,
-                            this@BoxWithConstraints.constraints.maxWidth,
-                            this@BoxWithConstraints.constraints.maxHeight,
+                            constraints.maxWidth,
+                            constraints.maxHeight,
                             preview,
                         )
                     } else {

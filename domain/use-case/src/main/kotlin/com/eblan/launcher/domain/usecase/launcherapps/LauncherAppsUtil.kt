@@ -52,6 +52,8 @@ internal suspend fun updateApplicationInfoGridItems(
         applicationInfoGridItemRepository.applicationInfoGridItems.first()
 
     applicationInfoGridItems.filterNot { applicationInfoGridItem ->
+        currentCoroutineContext().ensureActive()
+
         applicationInfoGridItem.override
     }.forEach { applicationInfoGridItem ->
         currentCoroutineContext().ensureActive()
@@ -120,16 +122,21 @@ internal suspend fun updateShortcutInfoGridItems(
                     packageManagerWrapper.getComponentName(packageName = eblanShortcutInfo.packageName)
 
                 val eblanApplicationInfoIcon = if (componentName != null) {
+                    val iconKey = "${eblanShortcutInfo.serialNumber}:$componentName"
+
                     val file = File(
                         directory,
-                        fileManager.getHashedFileName(name = componentName),
+                        fileManager.getHashedFileName(name = iconKey),
                     )
 
                     file.absolutePath
                 } else {
+                    val iconKey =
+                        "${eblanShortcutInfo.serialNumber}:${eblanShortcutInfo.packageName}"
+
                     val file = File(
                         directory,
-                        fileManager.getHashedFileName(name = eblanShortcutInfo.packageName),
+                        fileManager.getHashedFileName(name = iconKey),
                     )
 
                     packageManagerWrapper.getApplicationIcon(
@@ -190,19 +197,13 @@ internal suspend fun updateShortcutConfigGridItems(
         if (shortcutConfigActivityInfo != null) {
             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
-            val componentName =
-                packageManagerWrapper.getComponentName(packageName = shortcutConfigActivityInfo.packageName)
+            val iconKey =
+                "${shortcutConfigActivityInfo.serialNumber}:${shortcutConfigActivityInfo.componentName}"
 
-            val icon = if (componentName != null) {
-                val file = File(
-                    directory,
-                    fileManager.getHashedFileName(name = componentName),
-                )
-
-                file.absolutePath
-            } else {
-                null
-            }
+            val file = File(
+                directory,
+                fileManager.getHashedFileName(name = iconKey),
+            )
 
             updateShortcutConfigGridItems.add(
                 UpdateShortcutConfigGridItem(
@@ -213,7 +214,7 @@ internal suspend fun updateShortcutConfigGridItems(
                     applicationLabel = packageManagerWrapper.getApplicationLabel(
                         packageName = shortcutConfigActivityInfo.packageName,
                     ).toString(),
-                    applicationIcon = icon,
+                    applicationIcon = file.absolutePath,
                 ),
             )
         } else {
@@ -264,16 +265,22 @@ internal suspend fun updateWidgetGridItems(
                 packageManagerWrapper.getComponentName(packageName = eblanAppWidgetProviderInfo.packageName)
 
             val icon = if (componentName != null) {
+                val iconKey =
+                    "${eblanAppWidgetProviderInfo.serialNumber}:${eblanAppWidgetProviderInfo.componentName}"
+
                 val file = File(
                     directory,
-                    fileManager.getHashedFileName(name = componentName),
+                    fileManager.getHashedFileName(name = iconKey),
                 )
 
                 file.absolutePath
             } else {
+                val iconKey =
+                    "${eblanAppWidgetProviderInfo.serialNumber}:${eblanAppWidgetProviderInfo.packageName}"
+
                 val file = File(
                     directory,
-                    fileManager.getHashedFileName(name = eblanAppWidgetProviderInfo.packageName),
+                    fileManager.getHashedFileName(name = iconKey),
                 )
 
                 packageManagerWrapper.getApplicationIcon(

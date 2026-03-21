@@ -119,11 +119,13 @@ class GetPinGridItemUseCase @Inject constructor(
                 val eblanApplicationInfoIcon =
                     packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
                         ?.let { componentName ->
+                            val iconKey = "${pinItemRequestType.serialNumber}:$componentName"
+
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                             val file = File(
                                 directory,
-                                fileManager.getHashedFileName(name = componentName),
+                                fileManager.getHashedFileName(name = iconKey),
                             )
 
                             file.absolutePath

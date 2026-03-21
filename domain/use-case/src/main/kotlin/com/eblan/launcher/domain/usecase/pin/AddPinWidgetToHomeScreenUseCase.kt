@@ -83,7 +83,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
 
         val gridItems = gridRepository.gridItems.first() + getFolderGridItemsUseCase().first()
 
-        val applicationIcon =
+        val eblanApplicationInfoIcon =
             packageManagerWrapper.getComponentName(packageName = packageName)
                 ?.let { componentName ->
                     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
@@ -139,7 +139,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
             targetCellWidth = targetCellWidth,
             preview = preview,
             label = packageManagerWrapper.getApplicationLabel(packageName = packageName).toString(),
-            icon = applicationIcon,
+            icon = eblanApplicationInfoIcon,
         )
 
         val gridItem = GridItem(
@@ -179,7 +179,7 @@ class AddPinWidgetToHomeScreenUseCase @Inject constructor(
         )
 
         if (newGridItem != null) {
-            gridCacheRepository.upsertGridItems(gridItems = gridItems + newGridItem)
+            gridCacheRepository.insertGridItems(gridItems = gridItems + newGridItem)
         }
 
         newGridItem
