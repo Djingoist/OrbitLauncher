@@ -30,6 +30,7 @@ import android.os.Bundle
 import android.os.Process
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
+import com.eblan.launcher.domain.common.dispatcher.getShortcutIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
@@ -429,6 +430,9 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
     val shortcutInfo = pinItemRequest?.shortcutInfo
 
     if (pinItemRequest != null && shortcutInfo != null && pinItemRequest.isValid && pinItemRequest.accept()) {
+        val serialNumber =
+            androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
+
         val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
             shortcutInfo = shortcutInfo,
             density = 0,
@@ -437,7 +441,13 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
 
             val file = File(
                 directory,
-                fileManager.getHashedFileName(name = shortcutInfo.id),
+                fileManager.getHashedFileName(
+                    name = getShortcutIconKey(
+                        serialNumber = serialNumber,
+                        packageName = shortcutInfo.`package`,
+                        id = shortcutInfo.id,
+                    ),
+                ),
             )
 
             androidImageSerializer.createDrawablePath(drawable = drawable, file = file)
@@ -446,7 +456,7 @@ internal suspend fun handleShortcutConfigIntentSenderLauncherResult(
         }
 
         val pinItemRequestType = PinItemRequestType.ShortcutInfo(
-            serialNumber = androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle),
+            serialNumber = serialNumber,
             shortcutId = shortcutInfo.id,
             packageName = shortcutInfo.`package`,
             shortLabel = shortcutInfo.shortLabel.toString(),

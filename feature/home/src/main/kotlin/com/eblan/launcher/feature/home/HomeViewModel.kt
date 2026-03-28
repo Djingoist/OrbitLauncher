@@ -19,6 +19,7 @@ package com.eblan.launcher.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eblan.launcher.domain.common.dispatcher.getActivityIconKey
 import com.eblan.launcher.domain.framework.AppWidgetHostWrapper
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
@@ -573,7 +574,12 @@ internal class HomeViewModel @Inject constructor(
 
                         val file = File(
                             directory,
-                            fileManager.getHashedFileName(name = componentName),
+                            fileManager.getHashedFileName(
+                                name = getActivityIconKey(
+                                    serialNumber = pinItemRequestType.serialNumber,
+                                    componentName = componentName,
+                                ),
+                            ),
                         )
 
                         file.absolutePath

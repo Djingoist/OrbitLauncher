@@ -38,6 +38,8 @@ import android.os.UserManager
 import androidx.annotation.RequiresApi
 import com.eblan.launcher.domain.common.dispatcher.Dispatcher
 import com.eblan.launcher.domain.common.dispatcher.EblanDispatchers
+import com.eblan.launcher.domain.common.dispatcher.getActivityIconKey
+import com.eblan.launcher.domain.common.dispatcher.getShortcutIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.LauncherAppsWrapper
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
@@ -522,14 +524,17 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(): LauncherAppsActivityInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
 
-        val iconKey = "$serialNumber:${componentName.flattenToString()}"
-
         val activityIcon = getBadgedIcon(0).let { drawable ->
             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
             val file = File(
                 directory,
-                fileManager.getHashedFileName(name = iconKey),
+                fileManager.getHashedFileName(
+                    name = getActivityIconKey(
+                        serialNumber = serialNumber,
+                        componentName = componentName.flattenToString(),
+                    ),
+                ),
             )
 
             imageSerializer.createDrawablePath(drawable = drawable, file = file)
@@ -558,14 +563,18 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
     private suspend fun ShortcutInfo.toLauncherAppsShortcutInfo(): LauncherAppsShortcutInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = userHandle)
 
-        val shortcutIconKey = "$serialNumber:${`package`}:$id"
-
         val icon = launcherApps.getShortcutBadgedIconDrawable(this, 0)?.let { drawable ->
             val directory = fileManager.getFilesDirectory(FileManager.SHORTCUTS_DIR)
 
             val file = File(
                 directory,
-                fileManager.getHashedFileName(name = shortcutIconKey),
+                fileManager.getHashedFileName(
+                    name = getShortcutIconKey(
+                        serialNumber = serialNumber,
+                        packageName = `package`,
+                        id = id,
+                    ),
+                ),
             )
 
             imageSerializer.createDrawablePath(drawable = drawable, file = file)

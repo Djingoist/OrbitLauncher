@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.pin
 
 import com.eblan.launcher.domain.common.dispatcher.Dispatcher
 import com.eblan.launcher.domain.common.dispatcher.EblanDispatchers
+import com.eblan.launcher.domain.common.dispatcher.getActivityIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.grid.findAvailableRegionByPage
@@ -70,13 +71,16 @@ class AddPinShortcutToHomeScreenUseCase @Inject constructor(
         val eblanApplicationInfoIcon =
             packageManagerWrapper.getComponentName(packageName = packageName)
                 ?.let { componentName ->
-                    val iconKey = "$serialNumber:$componentName"
-
                     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                     val file = File(
                         directory,
-                        fileManager.getHashedFileName(name = iconKey),
+                        fileManager.getHashedFileName(
+                            name = getActivityIconKey(
+                                serialNumber = serialNumber,
+                                componentName = componentName,
+                            ),
+                        ),
                     )
 
                     file.absolutePath

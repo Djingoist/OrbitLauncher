@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.eblan.launcher.domain.common.dispatcher.getShortcutIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.ui.local.LocalAppWidgetHost
@@ -213,9 +214,6 @@ private fun PinShortcutScreen(
                             val serialNumber =
                                 androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
 
-                            val shortcutIconKey =
-                                "$serialNumber:${shortcutInfo.`package`}:${shortcutInfo.id}"
-
                             val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
                                 shortcutInfo = shortcutInfo,
                                 density = 0,
@@ -225,7 +223,13 @@ private fun PinShortcutScreen(
 
                                 val file = File(
                                     directory,
-                                    fileManager.getHashedFileName(name = shortcutIconKey),
+                                    fileManager.getHashedFileName(
+                                        name = getShortcutIconKey(
+                                            serialNumber = serialNumber,
+                                            packageName = shortcutInfo.`package`,
+                                            id = shortcutInfo.id,
+                                        ),
+                                    ),
                                 )
 
                                 imageSerializer.createDrawablePath(drawable = drawable, file = file)

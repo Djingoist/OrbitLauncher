@@ -19,6 +19,7 @@ package com.eblan.launcher.domain.usecase.pin
 
 import com.eblan.launcher.domain.common.dispatcher.Dispatcher
 import com.eblan.launcher.domain.common.dispatcher.EblanDispatchers
+import com.eblan.launcher.domain.common.dispatcher.getActivityIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.Associate
@@ -51,14 +52,19 @@ class GetPinGridItemUseCase @Inject constructor(
 
         when (pinItemRequestType) {
             is PinItemRequestType.Widget -> {
-                val icon =
+                val eblanApplicationInfoIcon =
                     packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
                         ?.let { componentName ->
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                             val file = File(
                                 directory,
-                                fileManager.getHashedFileName(name = componentName),
+                                fileManager.getHashedFileName(
+                                    name = getActivityIconKey(
+                                        serialNumber = pinItemRequestType.serialNumber,
+                                        componentName = componentName,
+                                    ),
+                                ),
                             )
 
                             file.absolutePath
@@ -82,7 +88,7 @@ class GetPinGridItemUseCase @Inject constructor(
                     preview = pinItemRequestType.preview,
                     label = packageManagerWrapper.getApplicationLabel(packageName = pinItemRequestType.packageName)
                         .toString(),
-                    icon = icon,
+                    icon = eblanApplicationInfoIcon,
                 )
 
                 GridItem(
@@ -119,13 +125,16 @@ class GetPinGridItemUseCase @Inject constructor(
                 val eblanApplicationInfoIcon =
                     packageManagerWrapper.getComponentName(packageName = pinItemRequestType.packageName)
                         ?.let { componentName ->
-                            val iconKey = "${pinItemRequestType.serialNumber}:$componentName"
-
                             val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
                             val file = File(
                                 directory,
-                                fileManager.getHashedFileName(name = iconKey),
+                                fileManager.getHashedFileName(
+                                    name = getActivityIconKey(
+                                        serialNumber = pinItemRequestType.serialNumber,
+                                        componentName = componentName,
+                                    ),
+                                ),
                             )
 
                             file.absolutePath

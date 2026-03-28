@@ -17,6 +17,7 @@
  */
 package com.eblan.launcher.domain.usecase.launcherapps
 
+import com.eblan.launcher.domain.common.dispatcher.getActivityIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.framework.PackageManagerWrapper
 import com.eblan.launcher.domain.model.AppWidgetManagerAppWidgetProviderInfo
@@ -61,16 +62,14 @@ internal suspend fun deleteEblanApplicationInfoIcons(
         val icon = oldDeleteEblanApplicationInfo.icon
 
         val hasNoIconReference =
-            icon != null && eblanApplicationInfos
-                .none { eblanApplicationInfo ->
-                    currentCoroutineContext().ensureActive()
+            icon != null && eblanApplicationInfos.none { eblanApplicationInfo ->
+                currentCoroutineContext().ensureActive()
 
-                    eblanApplicationInfo.icon == icon
-                } && eblanAppWidgetProviderInfos
-                .none { eblanAppWidgetProviderInfo ->
-                    currentCoroutineContext().ensureActive()
-                    eblanAppWidgetProviderInfo.applicationIcon == icon
-                }
+                eblanApplicationInfo.icon == icon
+            } && eblanAppWidgetProviderInfos.none { eblanAppWidgetProviderInfo ->
+                currentCoroutineContext().ensureActive()
+                eblanAppWidgetProviderInfo.applicationIcon == icon
+            }
 
         if (hasNoIconReference) {
             val iconFile = File(icon)
@@ -92,19 +91,16 @@ internal suspend fun deleteEblanAppWidgetProviderInfoIcons(
 
         val applicationIcon = deleteEblanAppWidgetProviderInfo.applicationIcon
 
-        val hasNoIconReference = applicationIcon != null &&
-            eblanAppWidgetProviderInfos
-                .none { eblanAppWidgetProviderInfo ->
-                    currentCoroutineContext().ensureActive()
+        val hasNoIconReference =
+            applicationIcon != null && eblanAppWidgetProviderInfos.none { eblanAppWidgetProviderInfo ->
+                currentCoroutineContext().ensureActive()
 
-                    eblanAppWidgetProviderInfo.applicationIcon == applicationIcon
-                } &&
-            eblanApplicationInfos
-                .none { eblanApplicationInfo ->
-                    currentCoroutineContext().ensureActive()
+                eblanAppWidgetProviderInfo.applicationIcon == applicationIcon
+            } && eblanApplicationInfos.none { eblanApplicationInfo ->
+                currentCoroutineContext().ensureActive()
 
-                    eblanApplicationInfo.icon == applicationIcon
-                }
+                eblanApplicationInfo.icon == applicationIcon
+            }
 
         if (hasNoIconReference) {
             val iconFile = File(applicationIcon)
@@ -499,20 +495,15 @@ private suspend fun resolveApplicationIcon(
 ): String? {
     val directory = fileManager.getFilesDirectory(FileManager.ICONS_DIR)
 
-    val componentName = packageManagerWrapper.getComponentName(packageName = packageName)
-
-    return if (componentName != null) {
+    return packageManagerWrapper.getComponentName(packageName = packageName)?.let { componentName ->
         File(
             directory,
-            fileManager.getHashedFileName(name = "$serialNumber:$componentName"),
+            fileManager.getHashedFileName(
+                name = getActivityIconKey(
+                    serialNumber = serialNumber,
+                    componentName = componentName,
+                ),
+            ),
         ).absolutePath
-    } else {
-        val file =
-            File(
-                directory,
-                fileManager.getHashedFileName(name = "$serialNumber:$packageName"),
-            )
-
-        packageManagerWrapper.getApplicationIcon(packageName = packageName, file = file)
     }
 }

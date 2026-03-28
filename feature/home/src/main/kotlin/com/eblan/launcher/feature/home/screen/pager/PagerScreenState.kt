@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
+import com.eblan.launcher.domain.common.dispatcher.getShortcutIconKey
 import com.eblan.launcher.domain.framework.FileManager
 import com.eblan.launcher.domain.model.ApplicationInfoGridItem
 import com.eblan.launcher.domain.model.Associate
@@ -1334,9 +1335,6 @@ internal class PagerScreenState(
                         val serialNumber =
                             androidUserManagerWrapper.getSerialNumberForUser(userHandle = shortcutInfo.userHandle)
 
-                        val shortcutIconKey =
-                            "$serialNumber:${shortcutInfo.`package`}:${shortcutInfo.id}"
-
                         val icon = androidLauncherAppsWrapper.getShortcutBadgedIconDrawable(
                             shortcutInfo = shortcutInfo,
                             density = 0,
@@ -1345,7 +1343,13 @@ internal class PagerScreenState(
 
                             val file = File(
                                 directory,
-                                fileManager.getHashedFileName(name = shortcutIconKey),
+                                fileManager.getHashedFileName(
+                                    name = getShortcutIconKey(
+                                        serialNumber = serialNumber,
+                                        packageName = shortcutInfo.`package`,
+                                        id = shortcutInfo.id,
+                                    ),
+                                ),
                             )
 
                             androidImageSerializer.createDrawablePath(
