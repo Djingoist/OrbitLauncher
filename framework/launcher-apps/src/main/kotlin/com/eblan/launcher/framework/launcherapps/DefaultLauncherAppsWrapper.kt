@@ -507,19 +507,10 @@ internal class DefaultLauncherAppsWrapper @Inject constructor(
         userHandle = userHandle,
     ) && !userManagerWrapper.isQuietModeEnabled(userHandle = userHandle)
 
-    private fun isPrivateSpaceEntryPointHidden(userHandle: UserHandle): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            val launcherUserInfo = launcherApps.getLauncherUserInfo(userHandle) ?: return false
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                launcherUserInfo.userConfig.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN)
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
+    private fun isPrivateSpaceEntryPointHidden(userHandle: UserHandle): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA &&
+        launcherApps.getLauncherUserInfo(userHandle)
+            ?.userConfig
+            ?.getBoolean(LauncherUserInfo.PRIVATE_SPACE_ENTRYPOINT_HIDDEN) == true
 
     private suspend fun LauncherActivityInfo.toLauncherAppsActivityInfo(): LauncherAppsActivityInfo {
         val serialNumber = userManagerWrapper.getSerialNumberForUser(userHandle = user)
