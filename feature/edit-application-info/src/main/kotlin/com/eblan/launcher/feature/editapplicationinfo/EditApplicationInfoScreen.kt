@@ -58,6 +58,7 @@ import com.eblan.launcher.feature.editapplicationinfo.model.EditApplicationInfoU
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.dialog.SingleTextFieldDialog
 import com.eblan.launcher.ui.edit.CustomIcon
+import com.eblan.launcher.ui.edit.CustomLabelDialog
 import com.eblan.launcher.ui.settings.SettingsColumn
 import com.eblan.launcher.ui.settings.SettingsSwitch
 
@@ -87,7 +88,7 @@ internal fun EditApplicationInfoRoute(
         onDeleteEblanApplicationInfoTag = viewModel::deleteEblanApplicationInfoTag,
         onNavigateUp = onNavigateUp,
         onResetIconPackInfoPackageName = viewModel::resetIconPackInfoPackageName,
-        onRestoreEblanApplicationInfo = viewModel::restoreEblanApplicationInfo,
+        onResetEblanApplicationInfoCustomIcon = viewModel::resetEblanApplicationInfoCustomIcon,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateEblanApplicationInfo = viewModel::updateEblanApplicationInfo,
         onUpdateEblanApplicationInfoTag = viewModel::updateEblanApplicationInfoTag,
@@ -110,7 +111,6 @@ internal fun EditApplicationInfoScreen(
     onDeleteEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
     onNavigateUp: () -> Unit,
     onResetIconPackInfoPackageName: () -> Unit,
-    onRestoreEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateEblanApplicationInfo: (EblanApplicationInfo) -> Unit,
     onUpdateEblanApplicationInfoTag: (EblanApplicationInfoTag) -> Unit,
@@ -119,6 +119,7 @@ internal fun EditApplicationInfoScreen(
         eblanApplicationInfo: EblanApplicationInfo,
     ) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetEblanApplicationInfoCustomIcon: (EblanApplicationInfo) -> Unit,
 ) {
     if (editApplicationInfoUiState is EditApplicationInfoUiState.Success && editApplicationInfoUiState.eblanApplicationInfo != null) {
         Scaffold(
@@ -131,18 +132,6 @@ internal fun EditApplicationInfoScreen(
                         IconButton(onClick = onNavigateUp) {
                             Icon(
                                 imageVector = EblanLauncherIcons.ArrowBack,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = {
-                                onRestoreEblanApplicationInfo(editApplicationInfoUiState.eblanApplicationInfo)
-                            },
-                        ) {
-                            Icon(
-                                imageVector = EblanLauncherIcons.Restore,
                                 contentDescription = null,
                             )
                         }
@@ -170,6 +159,7 @@ internal fun EditApplicationInfoScreen(
                     onUpdateEblanApplicationInfoTag = onUpdateEblanApplicationInfoTag,
                     onUpdateGridItemCustomIcon = onUpdateGridItemCustomIcon,
                     onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                    onResetEblanApplicationInfoCustomIcon = onResetEblanApplicationInfoCustomIcon,
                 )
             }
         }
@@ -196,6 +186,7 @@ private fun Success(
         eblanApplicationInfo: EblanApplicationInfo,
     ) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetEblanApplicationInfoCustomIcon: (EblanApplicationInfo) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
 
@@ -234,6 +225,9 @@ private fun Success(
             },
             onUpdateUri = { uri ->
                 onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customIcon = uri))
+            },
+            onResetCustomIcon = {
+                onResetEblanApplicationInfoCustomIcon(eblanApplicationInfo)
             },
         )
 
@@ -284,7 +278,7 @@ private fun Success(
 
             var isError by remember { mutableStateOf(false) }
 
-            SingleTextFieldDialog(
+            CustomLabelDialog(
                 title = "Custom Label",
                 textFieldTitle = "Custom Label",
                 value = value,
@@ -304,6 +298,11 @@ private fun Success(
                     } else {
                         isError = true
                     }
+                },
+                onResetClick = {
+                    onUpdateEblanApplicationInfo(eblanApplicationInfo.copy(customLabel = null))
+
+                    showCustomLabelDialog = false
                 },
             )
         }

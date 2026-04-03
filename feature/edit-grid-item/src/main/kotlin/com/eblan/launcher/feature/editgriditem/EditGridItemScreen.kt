@@ -54,6 +54,7 @@ import com.eblan.launcher.feature.editgriditem.model.EditGridItemUiState
 import com.eblan.launcher.ui.dialog.IconPackInfoFilesDialog
 import com.eblan.launcher.ui.dialog.SingleTextFieldDialog
 import com.eblan.launcher.ui.edit.CustomIcon
+import com.eblan.launcher.ui.edit.CustomLabelDialog
 import com.eblan.launcher.ui.settings.EblanActionSettings
 import com.eblan.launcher.ui.settings.GridItemSettings
 import com.eblan.launcher.ui.settings.SettingsColumn
@@ -81,7 +82,7 @@ internal fun EditGridItemRoute(
         packageManagerIconPackInfos = packageManagerIconPackInfos,
         onNavigateUp = onNavigateUp,
         onResetIconPackInfoPackageName = viewModel::resetIconPackInfoPackageName,
-        onRestoreGridItem = viewModel::restoreGridItem,
+        onResetGridItemCustomIcon = viewModel::resetGridItemCustomIcon,
         onSearchIconPackInfoComponent = viewModel::searchIconPackInfoComponent,
         onUpdateGridItem = viewModel::updateGridItem,
         onUpdateIconPackInfoPackageName = viewModel::updateIconPackInfoPackageName,
@@ -98,7 +99,7 @@ internal fun EditGridItemScreen(
     packageManagerIconPackInfos: List<PackageManagerIconPackInfo>,
     onNavigateUp: () -> Unit,
     onResetIconPackInfoPackageName: () -> Unit,
-    onRestoreGridItem: (GridItem) -> Unit,
+    onResetGridItemCustomIcon: (GridItem) -> Unit,
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
@@ -128,28 +129,6 @@ internal fun EditGridItemScreen(
                             )
                         }
                     },
-                    actions = {
-                        IconButton(
-                            onClick = {
-                                when (editGridItemUiState.gridItem.data) {
-                                    is GridItemData.ApplicationInfo,
-                                    is GridItemData.ShortcutConfig,
-                                    is GridItemData.ShortcutInfo,
-                                    is GridItemData.Folder,
-                                    -> {
-                                        onRestoreGridItem(editGridItemUiState.gridItem)
-                                    }
-
-                                    else -> Unit
-                                }
-                            },
-                        ) {
-                            Icon(
-                                imageVector = EblanLauncherIcons.Restore,
-                                contentDescription = null,
-                            )
-                        }
-                    },
                 )
             },
         ) { paddingValues ->
@@ -167,6 +146,7 @@ internal fun EditGridItemScreen(
                     onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                     onUpdateGridItem = onUpdateGridItem,
                     onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                    onResetGridItemCustomIcon = onResetGridItemCustomIcon,
                 )
             }
         }
@@ -184,6 +164,7 @@ private fun Success(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetGridItemCustomIcon: (GridItem) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -206,6 +187,7 @@ private fun Success(
                         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                         onUpdateGridItem = onUpdateGridItem,
                         onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                        onResetGridItemCustomIcon = onResetGridItemCustomIcon,
                     )
                 }
 
@@ -219,6 +201,7 @@ private fun Success(
                         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                         onUpdateGridItem = onUpdateGridItem,
                         onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                        onResetGridItemCustomIcon = onResetGridItemCustomIcon,
                     )
                 }
 
@@ -232,6 +215,7 @@ private fun Success(
                         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                         onUpdateGridItem = onUpdateGridItem,
                         onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                        onResetGridItemCustomIcon = onResetGridItemCustomIcon,
                     )
                 }
 
@@ -245,6 +229,7 @@ private fun Success(
                         onSearchIconPackInfoComponent = onSearchIconPackInfoComponent,
                         onUpdateGridItem = onUpdateGridItem,
                         onUpdateIconPackInfoPackageName = onUpdateIconPackInfoPackageName,
+                        onResetGridItemCustomIcon = onResetGridItemCustomIcon,
                     )
                 }
 
@@ -306,6 +291,7 @@ private fun EditApplicationInfo(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetGridItemCustomIcon: (GridItem) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
 
@@ -331,6 +317,9 @@ private fun EditApplicationInfo(
             val newData = data.copy(customIcon = uri)
 
             onUpdateGridItem(gridItem.copy(data = newData))
+        },
+        onResetCustomIcon = {
+            onResetGridItemCustomIcon(gridItem)
         },
     )
 
@@ -372,7 +361,7 @@ private fun EditApplicationInfo(
 
         var isError by remember { mutableStateOf(false) }
 
-        SingleTextFieldDialog(
+        CustomLabelDialog(
             title = "Custom Label",
             textFieldTitle = "Custom Label",
             value = value,
@@ -395,6 +384,13 @@ private fun EditApplicationInfo(
                     isError = true
                 }
             },
+            onResetClick = {
+                val newData = data.copy(customLabel = null)
+
+                onUpdateGridItem(gridItem.copy(data = newData))
+
+                showCustomLabelDialog = false
+            },
         )
     }
 }
@@ -409,6 +405,7 @@ private fun EditFolder(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetGridItemCustomIcon: (GridItem) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
 
@@ -434,6 +431,9 @@ private fun EditFolder(
             val newData = data.copy(icon = uri)
 
             onUpdateGridItem(gridItem.copy(data = newData))
+        },
+        onResetCustomIcon = {
+            onResetGridItemCustomIcon(gridItem)
         },
     )
 
@@ -512,6 +512,7 @@ private fun EditShortcutInfo(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetGridItemCustomIcon: (GridItem) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
 
@@ -537,6 +538,9 @@ private fun EditShortcutInfo(
             val newData = data.copy(customIcon = uri)
 
             onUpdateGridItem(gridItem.copy(data = newData))
+        },
+        onResetCustomIcon = {
+            onResetGridItemCustomIcon(gridItem)
         },
     )
 
@@ -578,7 +582,7 @@ private fun EditShortcutInfo(
 
         var isError by remember { mutableStateOf(false) }
 
-        SingleTextFieldDialog(
+        CustomLabelDialog(
             title = "Custom Short Label",
             textFieldTitle = "Custom Short Label",
             value = value,
@@ -601,6 +605,13 @@ private fun EditShortcutInfo(
                     isError = true
                 }
             },
+            onResetClick = {
+                val newData = data.copy(customShortLabel = null)
+
+                onUpdateGridItem(gridItem.copy(data = newData))
+
+                showCustomShortLabelDialog = false
+            },
         )
     }
 }
@@ -615,6 +626,7 @@ private fun EditShortcutConfig(
     onSearchIconPackInfoComponent: (String) -> Unit,
     onUpdateGridItem: (GridItem) -> Unit,
     onUpdateIconPackInfoPackageName: (String) -> Unit,
+    onResetGridItemCustomIcon: (GridItem) -> Unit,
 ) {
     var showCustomIconDialog by remember { mutableStateOf(false) }
 
@@ -640,6 +652,9 @@ private fun EditShortcutConfig(
             val newData = data.copy(customIcon = uri)
 
             onUpdateGridItem(gridItem.copy(data = newData))
+        },
+        onResetCustomIcon = {
+            onResetGridItemCustomIcon(gridItem)
         },
     )
 
@@ -681,7 +696,7 @@ private fun EditShortcutConfig(
 
         var isError by remember { mutableStateOf(false) }
 
-        SingleTextFieldDialog(
+        CustomLabelDialog(
             title = "Custom Label",
             textFieldTitle = "Custom Label",
             value = value,
@@ -703,6 +718,13 @@ private fun EditShortcutConfig(
                 } else {
                     isError = true
                 }
+            },
+            onResetClick = {
+                val newData = data.copy(customLabel = null)
+
+                onUpdateGridItem(gridItem.copy(data = newData))
+
+                showCustomLabelDialog = false
             },
         )
     }

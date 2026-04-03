@@ -93,7 +93,7 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
         eblanApplicationInfoDao.updateEblanApplicationInfoEntity(entity = eblanApplicationInfo.asEntity())
     }
 
-    override suspend fun restoreEblanApplicationInfo(eblanApplicationInfo: EblanApplicationInfo) {
+    override suspend fun resetEblanApplicationInfoCustomIcon(eblanApplicationInfo: EblanApplicationInfo) {
         withContext(ioDispatcher) {
             eblanApplicationInfo.customIcon?.let { customIcon ->
                 val customIconFile = File(customIcon)
@@ -103,12 +103,7 @@ internal class DefaultEblanApplicationInfoRepository @Inject constructor(
                 }
             }
 
-            updateEblanApplicationInfo(
-                eblanApplicationInfo = eblanApplicationInfo.copy(
-                    customIcon = null,
-                    customLabel = null,
-                ),
-            )
+            updateEblanApplicationInfo(eblanApplicationInfo = eblanApplicationInfo.copy(customIcon = null))
         }
     }
 
