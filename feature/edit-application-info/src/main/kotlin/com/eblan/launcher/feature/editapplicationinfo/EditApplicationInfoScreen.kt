@@ -17,23 +17,26 @@
  */
 package com.eblan.launcher.feature.editapplicationinfo
 
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -42,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -323,18 +327,14 @@ private fun Tags(
 
     var showUpdateTagDialog by remember { mutableStateOf(false) }
 
-    var isManagedTags by remember { mutableStateOf(false) }
-
     var selectedEblanApplicationInfoTagUi by remember {
         mutableStateOf<EblanApplicationInfoTagUi?>(null)
     }
 
     FlowRow(modifier = modifier.fillMaxWidth()) {
         eblanApplicationInfoTagsUi.forEach { eblanApplicationInfoTagUi ->
-            EblanApplicationInfoTagUiFilterChip(
-                modifier = Modifier.padding(5.dp),
+            EblanApplicationInfoTagItem(
                 eblanApplicationInfoTagUi = eblanApplicationInfoTagUi,
-                isManagedTags = isManagedTags,
                 onAddEblanApplicationInfoCrossRef = onAddEblanApplicationInfoCrossRef,
                 onDeleteEblanApplicationInfoCrossRef = onDeleteEblanApplicationInfoCrossRef,
                 onShowUpdateTagDialog = { newEblanApplicationInfoTagUi ->
@@ -345,20 +345,17 @@ private fun Tags(
             )
         }
 
-        AddTagAssistChip(
-            modifier = Modifier.padding(5.dp),
+        IconButton(
             onClick = {
                 showAddTagDialog = true
             },
-        )
-
-        ManageTagsFilterChip(
-            modifier = Modifier.padding(5.dp),
-            isManagedTags = isManagedTags,
-            onClick = {
-                isManagedTags = !isManagedTags
-            },
-        )
+        ) {
+            Icon(
+                imageVector = EblanLauncherIcons.Add,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+        }
     }
 
     if (showAddTagDialog) {
@@ -403,82 +400,81 @@ private fun Tags(
 }
 
 @Composable
-private fun EblanApplicationInfoTagUiFilterChip(
+private fun EblanApplicationInfoTagItem(
     modifier: Modifier = Modifier,
     eblanApplicationInfoTagUi: EblanApplicationInfoTagUi,
-    isManagedTags: Boolean,
     onAddEblanApplicationInfoCrossRef: (Long) -> Unit,
     onDeleteEblanApplicationInfoCrossRef: (Long) -> Unit,
     onShowUpdateTagDialog: (EblanApplicationInfoTagUi) -> Unit,
 ) {
-    FilterChip(
-        modifier = modifier,
-        onClick = {
-            if (isManagedTags) {
-                onShowUpdateTagDialog(eblanApplicationInfoTagUi)
-            } else {
-                if (eblanApplicationInfoTagUi.selected) {
-                    onDeleteEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
-                } else {
-                    onAddEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
-                }
-            }
-        },
-        label = {
-            Text(text = eblanApplicationInfoTagUi.name)
-        },
-        selected = eblanApplicationInfoTagUi.selected,
-        leadingIcon = if (eblanApplicationInfoTagUi.selected) {
-            {
+    Card(
+        modifier = modifier.padding(5.dp),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .combinedClickable(
+                    onClick = {
+                        if (eblanApplicationInfoTagUi.selected) {
+                            onDeleteEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
+                        } else {
+                            onAddEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
+                        }
+                    },
+                )
+                .padding(5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            if (eblanApplicationInfoTagUi.selected) {
                 Icon(
                     imageVector = EblanLauncherIcons.Done,
                     contentDescription = null,
-                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    modifier = Modifier.size(20.dp),
                 )
             }
-        } else {
-            null
-        },
-    )
+
+            Text(
+                text = eblanApplicationInfoTagUi.name,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+
+            IconButton(
+                onClick = {
+                    onShowUpdateTagDialog(eblanApplicationInfoTagUi)
+                },
+            ) {
+                Icon(
+                    imageVector = EblanLauncherIcons.Edit,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun AddTagAssistChip(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    AssistChip(
+    Card(
         modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
         onClick = onClick,
-        label = { Text(text = "Add Tag") },
-        leadingIcon = {
+    ) {
+        Row(
+            modifier = Modifier.padding(5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Icon(
                 modifier = Modifier.size(AssistChipDefaults.IconSize),
                 imageVector = EblanLauncherIcons.Add,
                 contentDescription = null,
             )
-        },
-    )
-}
 
-@Composable
-private fun ManageTagsFilterChip(
-    modifier: Modifier = Modifier,
-    isManagedTags: Boolean,
-    onClick: () -> Unit,
-) {
-    FilterChip(
-        modifier = modifier,
-        onClick = onClick,
-        label = { Text(text = "Manage Tags") },
-        selected = isManagedTags,
-        leadingIcon = if (isManagedTags) {
-            {
-                Icon(
-                    imageVector = EblanLauncherIcons.Done,
-                    contentDescription = null,
-                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                )
-            }
-        } else {
-            null
-        },
-    )
+            Text(
+                text = "Add Tag",
+            )
+        }
+    }
 }

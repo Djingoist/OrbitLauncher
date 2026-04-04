@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EblanApplicationInfoTagDao {
-    @Query("SELECT * FROM EblanApplicationInfoTagEntity ORDER BY name")
+    @Query("SELECT * FROM EblanApplicationInfoTagEntity ORDER BY id")
     fun getEblanApplicationInfoTagEntities(): Flow<List<EblanApplicationInfoTagEntity>>
 
     @Insert
