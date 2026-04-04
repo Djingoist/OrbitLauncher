@@ -566,7 +566,6 @@ internal class PagerScreenState(
     ) {
         handleAnimateScrollToPage(
             associate = associate,
-            columns = homeSettings.columns,
             density = density,
             dragIntOffset = dragIntOffset,
             folderGridItem = folderGridItem,

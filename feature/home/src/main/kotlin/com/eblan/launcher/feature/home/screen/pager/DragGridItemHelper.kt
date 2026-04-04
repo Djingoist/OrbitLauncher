@@ -35,6 +35,8 @@ import com.eblan.launcher.domain.model.Associate
 import com.eblan.launcher.domain.model.GridItem
 import com.eblan.launcher.domain.model.GridItemData
 import com.eblan.launcher.domain.model.MoveGridItemResult
+import com.eblan.launcher.domain.usecase.grid.FOLDER_MAX_COLUMNS
+import com.eblan.launcher.domain.usecase.grid.FOLDER_MAX_ROWS
 import com.eblan.launcher.feature.home.model.Drag
 import com.eblan.launcher.feature.home.model.GridItemSource
 import com.eblan.launcher.feature.home.model.PageDirection
@@ -45,7 +47,6 @@ import kotlinx.coroutines.delay
 
 internal fun handleAnimateScrollToPage(
     associate: Associate?,
-    columns: Int,
     density: Density,
     dragIntOffset: IntOffset,
     folderGridItem: GridItem?,
@@ -113,7 +114,7 @@ internal fun handleAnimateScrollToPage(
 
             val data = folderGridItem?.data as? GridItemData.Folder ?: return
 
-            val folderCellWidth = safeDrawingWidth / columns
+            val folderCellWidth = safeDrawingWidth / FOLDER_MAX_COLUMNS
 
             val folderGridPaddingPx = with(density) {
                 FOLDER_GRID_PADDING.roundToPx()
@@ -283,7 +284,6 @@ internal fun handleDragGridItem(
 
         is GridItemSource.Folder -> {
             handleDragFolderGridItem(
-                columns = columns,
                 density = density,
                 dragX = dragX,
                 dragY = dragY,
@@ -293,7 +293,6 @@ internal fun handleDragGridItem(
                 folderPopupIntSize = folderPopupIntSize,
                 folderTitleHeightPx = folderTitleHeightPx,
                 gridItemSource = gridItemSource,
-                rows = rows,
                 safeDrawingHeight = safeDrawingHeight,
                 safeDrawingWidth = safeDrawingWidth,
                 onMoveFolderGridItem = onMoveFolderGridItem,
@@ -306,7 +305,6 @@ internal fun handleDragGridItem(
 }
 
 private fun handleDragFolderGridItem(
-    columns: Int,
     density: Density,
     dragX: Int,
     dragY: Int,
@@ -316,7 +314,6 @@ private fun handleDragFolderGridItem(
     folderPopupIntSize: IntSize?,
     folderTitleHeightPx: Int,
     gridItemSource: GridItemSource,
-    rows: Int,
     safeDrawingHeight: Int,
     safeDrawingWidth: Int,
     onMoveFolderGridItem: (
@@ -345,9 +342,9 @@ private fun handleDragFolderGridItem(
 
     val gridItemSourceFolder = gridItemSource as? GridItemSource.Folder ?: return
 
-    val folderCellWidth = safeDrawingWidth / columns
+    val folderCellWidth = safeDrawingWidth / FOLDER_MAX_COLUMNS
 
-    val folderCellHeight = safeDrawingHeight / rows
+    val folderCellHeight = safeDrawingHeight / FOLDER_MAX_ROWS
 
     val folderGridPaddingPx = with(density) {
         FOLDER_GRID_PADDING.roundToPx()
