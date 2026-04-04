@@ -29,14 +29,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -345,17 +343,11 @@ private fun Tags(
             )
         }
 
-        IconButton(
+        AddTag(
             onClick = {
                 showAddTagDialog = true
             },
-        ) {
-            Icon(
-                imageVector = EblanLauncherIcons.Add,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-        }
+        )
     }
 
     if (showAddTagDialog) {
@@ -421,8 +413,11 @@ private fun EblanApplicationInfoTagItem(
                             onAddEblanApplicationInfoCrossRef(eblanApplicationInfoTagUi.id)
                         }
                     },
+                    onLongClick = {
+                        onShowUpdateTagDialog(eblanApplicationInfoTagUi)
+                    },
                 )
-                .padding(5.dp),
+                .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -434,47 +429,34 @@ private fun EblanApplicationInfoTagItem(
                 )
             }
 
-            Text(
-                text = eblanApplicationInfoTagUi.name,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-
-            IconButton(
-                onClick = {
-                    onShowUpdateTagDialog(eblanApplicationInfoTagUi)
-                },
-            ) {
-                Icon(
-                    imageVector = EblanLauncherIcons.Edit,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
+            Text(text = eblanApplicationInfoTagUi.name)
         }
     }
 }
 
 @Composable
-private fun AddTagAssistChip(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun AddTag(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Card(
-        modifier = modifier,
+        modifier = modifier.padding(5.dp),
         shape = RoundedCornerShape(16.dp),
-        onClick = onClick,
     ) {
         Row(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier
+                .combinedClickable(onClick = onClick)
+                .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Icon(
-                modifier = Modifier.size(AssistChipDefaults.IconSize),
                 imageVector = EblanLauncherIcons.Add,
                 contentDescription = null,
+                modifier = Modifier.size(20.dp),
             )
 
-            Text(
-                text = "Add Tag",
-            )
+            Text(text = "Add Tag")
         }
     }
 }
