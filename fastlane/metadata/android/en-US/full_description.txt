@@ -24,4 +24,4 @@
 <li>Custom dock grid size</li>
 </ul>
 
-<p>Explore and discover more features, all packed in a small app (~2MB)</p>
+<p>Explore and discover more features, only ~2MB</p>
