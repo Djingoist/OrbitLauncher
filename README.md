@@ -42,7 +42,7 @@ Closed-source launchers are locking features behind paywalls and adding trackers
 * Adjustable dock height
 * Custom dock grid size
 
-Explore and discover more features, all packed in a small app (~2MB)
+Explore and discover more features, only ~2MB
 
 ## Screenshots
 
