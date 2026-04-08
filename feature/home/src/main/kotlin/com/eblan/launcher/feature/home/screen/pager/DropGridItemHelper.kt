@@ -81,22 +81,22 @@ internal suspend fun handleDropGridItem(
         onToast()
     }
 
-    val dragFailed =
+    val isDropFailed =
         drag == Drag.Cancel ||
             moveGridItemResult == null ||
             !moveGridItemResult.isSuccess
 
     when (gridItemSource) {
         is GridItemSource.Existing -> {
-            if (lockMovement) return cancel()
-
             if (isVisibleOverlay && !isDragging) {
                 onUpdateIsVisibleOverlay(false)
 
                 return
             }
 
-            if (isVisibleOverlay && dragFailed) return cancel()
+            if (isVisibleOverlay && isDropFailed) return cancel()
+
+            if (lockMovement) return cancel()
 
             if (isVisibleOverlay && moveGridItemResult != null) {
                 onUpdateIsDragging(false)
@@ -106,9 +106,9 @@ internal suspend fun handleDropGridItem(
         }
 
         is GridItemSource.New -> {
-            if (lockMovement) return cancel()
+            if (isVisibleOverlay && isDragging && isDropFailed) return cancel()
 
-            if (isVisibleOverlay && isDragging && dragFailed) return cancel()
+            if (lockMovement) return cancel()
 
             if (isVisibleOverlay && isDragging && moveGridItemResult != null) {
                 onUpdateIsDragging(false)
@@ -148,9 +148,9 @@ internal suspend fun handleDropGridItem(
         }
 
         is GridItemSource.Pin -> {
-            if (lockMovement) return cancel()
+            if (isVisibleOverlay && isDragging && isDropFailed) return cancel()
 
-            if (isVisibleOverlay && isDragging && dragFailed) return cancel()
+            if (lockMovement) return cancel()
 
             if (isVisibleOverlay && isDragging && moveGridItemResult != null) {
                 onUpdateIsDragging(false)
@@ -184,15 +184,11 @@ internal suspend fun handleDropGridItem(
         }
 
         is GridItemSource.Folder -> {
-            val shouldCancel = lockMovement || drag == Drag.Cancel
-            val longPressWithoutDrag = isVisibleOverlay && !isDragging
-            val shouldFinishDrag = isVisibleOverlay && isDragging && !shouldCancel
-
-            if (shouldCancel) {
-                cancel()
-            } else if (longPressWithoutDrag) {
+            if (isVisibleOverlay && !isDragging) {
                 onUpdateIsVisibleOverlay(false)
-            } else if (shouldFinishDrag) {
+            } else if (lockMovement) {
+                cancel()
+            } else if (isVisibleOverlay) {
                 onUpdateIsDragging(false)
 
                 onDragEndAfterMoveFolder(moveGridItemResult)
