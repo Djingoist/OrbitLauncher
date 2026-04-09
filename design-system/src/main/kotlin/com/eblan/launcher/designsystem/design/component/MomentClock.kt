@@ -65,13 +65,13 @@ fun MomentClock(
         // Draw center circle
         CenterCircle(
             size = centerSize,
-            color = OrbitColors.OrbitDim
+            color = Color(0xFF444444)
         )
 
         // Draw orbital ring
         OrbitRing(
             radius = orbitRadius,
-            color = OrbitColors.OrbitDim,
+            color = Color(0xFF444444),
             strokeWidth = 1.dp
         )
 
@@ -90,7 +90,7 @@ fun MomentClock(
                 val dotY = centerY + (radius * sin(angleRad)).toFloat()
 
                 drawCircle(
-                    color = OrbitColors.OrbitGray,
+                    color = Color(0xFF888888),
                     radius = 4.dp.toPx(),
                     center = Offset(dotX, dotY)
                 )
@@ -112,14 +112,14 @@ fun MomentClock(
 
             // Draw moment (larger, cyan)
             drawCircle(
-                color = OrbitColors.OrbitCyan,
+                color = Color(0xFF00F5D4),
                 radius = 12.dp.toPx(),
                 center = Offset(momentX, momentY)
             )
 
             // Draw glow
             drawCircle(
-                color = OrbitColors.OrbitCyan.copy(alpha = 0.3f),
+                color = Color(0xFF00F5D4).copy(alpha = 0.3f),
                 radius = 20.dp.toPx(),
                 center = Offset(momentX, momentY)
             )

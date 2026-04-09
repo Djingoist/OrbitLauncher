@@ -30,7 +30,7 @@ import kotlin.math.sin
 @Composable
 fun OrbitRing(
     radius: Dp,
-    color: Color = OrbitColors.OrbitDim,
+    color: Color = Color(0xFF444444),
     strokeWidth: Dp = 2.dp,
     modifier: Modifier = Modifier
 ) {
@@ -98,7 +98,7 @@ fun OrbitalItem(
 @Composable
 fun CenterCircle(
     size: Dp,
-    color: Color = OrbitColors.OrbitDim,
+    color: Color = Color(0xFF444444),
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier.size(size)) {
