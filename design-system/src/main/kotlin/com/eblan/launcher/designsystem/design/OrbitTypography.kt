@@ -5,13 +5,16 @@
 
 package com.eblan.launcher.designsystem.design
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.eblan.launcher.designsystem.design.OrbitColors.OrbitWhite
-import com.eblan.launcher.designsystem.design.OrbitColors.OrbitGray
-import com.eblan.launcher.designsystem.design.OrbitColors.OrbitCyan
+
+// Re-export colors for convenience
+private val OrbitWhite = Color(0xFFE8E8E8)
+private val OrbitGray = Color(0xFF888888)
+private val OrbitCyan = Color(0xFF00F5D4)
 
 object OrbitTypography {
     // Main time display - large monospace numerals
