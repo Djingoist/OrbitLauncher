@@ -3,15 +3,15 @@
  * Monospace, retro styling
  */
 
-package com.eblan.launcher.design
+package com.eblan.launcher.designsystem.design
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.eblan.launcher.design.OrbitColors.OrbitWhite
-import com.eblan.launcher.design.OrbitColors.OrbitGray
-import com.eblan.launcher.design.OrbitColors.OrbitCyan
+import com.eblan.launcher.designsystem.design.OrbitColors.OrbitWhite
+import com.eblan.launcher.designsystem.design.OrbitColors.OrbitGray
+import com.eblan.launcher.designsystem.design.OrbitColors.OrbitCyan
 
 object OrbitTypography {
     // Main time display - large monospace numerals

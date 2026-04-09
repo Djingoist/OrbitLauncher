@@ -4,7 +4,7 @@
  * Shows current hour based on where the Moment sits on the circle
  */
 
-package com.eblan.launcher.design.component
+package com.eblan.launcher.designsystem.design.component
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -30,8 +30,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.design.OrbitColors
-import com.eblan.launcher.design.OrbitTypography
+import com.eblan.launcher.designsystem.design.OrbitColors
+import com.eblan.launcher.designsystem.design.OrbitTypography
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin

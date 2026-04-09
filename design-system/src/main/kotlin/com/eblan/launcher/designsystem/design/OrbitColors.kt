@@ -3,7 +3,7 @@
  * Flat, retro aesthetic matching reference images
  */
 
-package com.eblan.launcher.design
+package com.eblan.launcher.designsystem.design
 
 import androidx.compose.ui.graphics.Color
 
