@@ -30,8 +30,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.eblan.launcher.designsystem.design.OrbitColors
-import com.eblan.launcher.designsystem.design.OrbitTypography
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
